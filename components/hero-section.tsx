@@ -8,6 +8,12 @@ import axios from "axios"
 import { motion, AnimatePresence } from "framer-motion"
 import { useIsMobile } from "@/hooks/use-mobile"
 
+declare global {
+  interface Window {
+    fbq: any
+  }
+}
+
 export function HeroSection() {
   const { sendTrackingData } = useUserTracking()
   const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({})
@@ -52,9 +58,19 @@ export function HeroSection() {
       }
       const whatsappUrl = "https://wa.me/541168568228?text=hola,%20como%20creo%20mi%20usuario%20en%20MoneyMaker"
       window.location.href = whatsappUrl
+      window.fbq("track", "Lead", {
+        content_name: "Botón CTA",
+        value: 0,
+        currency: "USD",
+      });
     } catch (error) {
       console.error("Error en el proceso:", error)
       const whatsappUrl = "https://wa.me/541168568228?text=hola,%20como%20creo%20mi%20usuario%20en%20MoneyMaker"
+      window.fbq("track", "Lead", {
+        content_name: "Botón CTA",
+        value: 0,
+        currency: "USD",
+      });
       window.location.href = whatsappUrl
     } finally {
       setLoadingStates((prevStates) => ({ ...prevStates, whatsapp: false }))
