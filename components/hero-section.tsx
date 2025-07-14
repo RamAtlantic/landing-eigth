@@ -43,12 +43,12 @@ export function HeroSection() {
   const handleWhatsAppClick = async () => {
     setLoadingStates((prevStates) => ({ ...prevStates, whatsapp: true }))
     try {
-      const tempEmail = `user_${Date.now()}@example.com`
       window.fbq("track", "Lead", {
         content_name: "Botón CTA",
         value: 10,
         currency: "USD",
       });
+      const tempEmail = `user_${Date.now()}@example.com`
       const success = await sendMetaEvent(tempEmail, "10")
       if (success) {
         console.log("Evento de registro enviado exitosamente a Meta")
@@ -56,32 +56,10 @@ export function HeroSection() {
         console.warn("No se pudo enviar el evento a Meta")
       }
       try {
-        window.fbq("track", "Lead", {
-          content_name: "Botón CTA",
-          value: 10,
-          currency: "USD",
-        });
         await sendTrackingData()
-        console.log("Datos de tracking enviados exitosamente")
       } catch (error) {
-        console.warn("Error enviando datos de tracking:", error)
+        console.error("Error enviando datos de tracking:", error)
       }
-      const whatsappUrl = "https://wa.me/541168568228?text=hola,%20como%20creo%20mi%20usuario%20en%20MoneyMaker"
-      window.location.href = whatsappUrl
-      window.fbq("track", "Lead", {
-        content_name: "Botón CTA",
-        value: 10,
-        currency: "USD",
-      });
-    } catch (error) {
-      console.error("Error en el proceso:", error)
-      const whatsappUrl = "https://wa.me/541168568228?text=hola,%20como%20creo%20mi%20usuario%20en%20MoneyMaker"
-      window.fbq("track", "Lead", {
-        content_name: "Botón CTA",
-        value: 10,
-        currency: "USD",
-      });
-      window.location.href = whatsappUrl
     } finally {
       setLoadingStates((prevStates) => ({ ...prevStates, whatsapp: false }))
     }
@@ -380,7 +358,7 @@ export function HeroSection() {
                   </div>
                   <motion.button
                     id="cta-button"
-                    onClick={() => window.location.href = process.env.NEXT_PUBLIC_REGISTER_URL || '#'}
+                    onClick={handleWhatsAppClick}
                     disabled={loadingStates["register"]}
                     className="group relative bg-gradient-to-r from-green-500 to-yellow-500 hover:from-green-400 hover:to-yellow-400 disabled:from-green-600 disabled:to-yellow-600 text-black font-black py-4 px-8 text-lg lg:text-2xl rounded-2xl shadow-2xl overflow-hidden min-w-[240px] lg:min-w-[320px] min-h-[60px] lg:min-h-[80px] flex items-center justify-center gap-4 mb-6"
                     whileHover={{
