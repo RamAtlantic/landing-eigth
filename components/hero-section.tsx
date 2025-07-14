@@ -1,47 +1,56 @@
-"use client"
+"use client";
 
-import { ArrowRight, MessageCircle, CreditCard, Shield, MapPin, Play } from "lucide-react"
-import { useUserTracking } from "../app/context/tracking-context"
-import { sendMetaEvent } from "@/services/metaEventService"
-import { useEffect, useState } from "react"
-import axios from "axios"
-import { motion, AnimatePresence } from "framer-motion"
-import { useIsMobile } from "@/hooks/use-mobile"
+import {
+  ArrowRight,
+  MessageCircle,
+  CreditCard,
+  Shield,
+  MapPin,
+  Play,
+} from "lucide-react";
+import { useUserTracking } from "../app/context/tracking-context";
+import { sendMetaEvent } from "@/services/metaEventService";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 declare global {
   interface Window {
-    fbq: any
+    fbq: any;
   }
 }
 
 export function HeroSection() {
-  const { sendTrackingData } = useUserTracking()
-  const [loadingStates, setLoadingStates] = useState<{ [key: string]: boolean }>({})
-  const [localidad, setLocalidad] = useState<string | null>(null)
-  const [loadingLocalidad, setLoadingLocalidad] = useState<boolean>(true)
-  const [isHovered, setIsHovered] = useState(false)
-  const [isVisible, setIsVisible] = useState(false)
-  const isMobile = useIsMobile()
+  const { sendTrackingData } = useUserTracking();
+  const [loadingStates, setLoadingStates] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [localidad, setLocalidad] = useState<string | null>(null);
+  const [loadingLocalidad, setLoadingLocalidad] = useState<boolean>(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
-    setIsVisible(true)
+    setIsVisible(true);
     const fetchLocalidad = async () => {
       try {
-        const ipResponse = await axios.get("https://api.ipify.org?format=json")
-        const ip = ipResponse.data.ip
-        const geoRes = await axios.get(`https://ipinfo.io/${ip}/json`)
-        setLocalidad(geoRes.data.city)
+        const ipResponse = await axios.get("https://api.ipify.org?format=json");
+        const ip = ipResponse.data.ip;
+        const geoRes = await axios.get(`https://ipinfo.io/${ip}/json`);
+        setLocalidad(geoRes.data.city);
       } catch (e: any) {
-        console.warn("No se pudo obtener la localidad:", e.message)
+        console.warn("No se pudo obtener la localidad:", e.message);
       } finally {
-        setLoadingLocalidad(false)
+        setLoadingLocalidad(false);
       }
-    }
-    fetchLocalidad()
-  }, [])
+    };
+    fetchLocalidad();
+  }, []);
 
   const handleWhatsAppClick = async () => {
-    setLoadingStates((prevStates) => ({ ...prevStates, whatsapp: true }))
+    setLoadingStates((prevStates) => ({ ...prevStates, whatsapp: true }));
     try {
       try {
         window.fbq("track", "Lead", {
@@ -49,43 +58,46 @@ export function HeroSection() {
           value: 10,
           currency: "USD",
         });
-        const tempEmail = `user_${Date.now()}@example.com`
-        const success = await sendMetaEvent(tempEmail, "10")
+        const tempEmail = `user_${Date.now()}@example.com`;
+        const success = await sendMetaEvent(tempEmail, "10");
         if (success) {
-          console.log("Evento de registro enviado exitosamente a Meta")
+          console.log("Evento de registro enviado exitosamente a Meta");
         } else {
-          console.warn("No se pudo enviar el evento a Meta")
+          console.warn("No se pudo enviar el evento a Meta");
         }
         try {
-
-          await sendTrackingData()
-          console.log("Datos de tracking enviados exitosamente")
+          await sendTrackingData();
+          console.log("Datos de tracking enviados exitosamente");
         } catch (error) {
-          console.warn("Error enviando datos de tracking:", error)
+          console.warn("Error enviando datos de tracking:", error);
         }
-        const whatsappUrl = "https://wa.me/541168568228?text=hola,%20como%20creo%20mi%20usuario%20en%20MoneyMaker"
-        window.location.href = whatsappUrl
-
+        const whatsappUrl =
+          "https://wa.me/541168568228?text=hola,%20como%20creo%20mi%20usuario%20en%20MoneyMaker";
+        window.location.href = whatsappUrl;
       } catch (error) {
-        console.error("Error en el proceso:", error)
-        const whatsappUrl = "https://wa.me/541168568228?text=hola,%20como%20creo%20mi%20usuario%20en%20MoneyMaker"
+        console.error("Error en el proceso:", error);
+        const whatsappUrl =
+          "https://wa.me/541168568228?text=hola,%20como%20creo%20mi%20usuario%20en%20MoneyMaker";
 
-        window.location.href = whatsappUrl
+        window.location.href = whatsappUrl;
       } finally {
-        setLoadingStates((prevStates) => ({ ...prevStates, whatsapp: false }))
+        setLoadingStates((prevStates) => ({ ...prevStates, whatsapp: false }));
       }
-
     } catch (error) {
-      console.error("Error en el proceso:", error)
+      console.error("Error en el proceso:", error);
     }
 
     const CircularLoader = () => (
       <motion.div
         className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full"
         animate={{ rotate: 360 }}
-        transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+        transition={{
+          duration: 1,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: "linear",
+        }}
       />
-    )
+    );
 
     const containerVariants = {
       hidden: { opacity: 0 },
@@ -96,7 +108,7 @@ export function HeroSection() {
           delayChildren: 0.2,
         },
       },
-    }
+    };
 
     const itemVariants = {
       hidden: { y: 50, opacity: 0 },
@@ -109,7 +121,7 @@ export function HeroSection() {
           damping: 15,
         },
       },
-    }
+    };
 
     return (
       <section className="min-h-screen bg-black relative overflow-hidden">
@@ -165,7 +177,10 @@ export function HeroSection() {
                   className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center"
                 >
                   {/* Top Left: Brand Section */}
-                  <motion.div variants={itemVariants} className="text-center lg:text-left">
+                  <motion.div
+                    variants={itemVariants}
+                    className="text-center lg:text-left"
+                  >
                     <motion.h1 className="text-4xl md:text-8xl font-black mb-4">
                       <motion.span
                         className="block bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent"
@@ -215,9 +230,16 @@ export function HeroSection() {
                   </motion.div>
 
                   {/* Top Right: Video Section */}
-                  <motion.div variants={itemVariants} className="flex justify-center lg:justify-end">
+                  <motion.div
+                    variants={itemVariants}
+                    className="flex justify-center lg:justify-end"
+                  >
                     <motion.div
-                      initial={isMobile ? { opacity: 0, scale: 0.8 } : { opacity: 0, scale: 0.8, x: 200 }}
+                      initial={
+                        isMobile
+                          ? { opacity: 0, scale: 0.8 }
+                          : { opacity: 0, scale: 0.8, x: 200 }
+                      }
                       whileInView={{ opacity: 1, scale: 1, x: 0 }}
                       viewport={{ once: true, amount: 0.3 }}
                       transition={{
@@ -257,7 +279,10 @@ export function HeroSection() {
                   </motion.div>
 
                   {/* Bottom Left: Premios Card (Moved from right) */}
-                  <motion.div variants={itemVariants} className="flex justify-center lg:justify-start hidden lg:block">
+                  <motion.div
+                    variants={itemVariants}
+                    className="flex justify-center lg:justify-start hidden lg:block"
+                  >
                     <motion.div
                       className="relative bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-purple-500/10 border border-purple-400/30 rounded-3xl p-6 lg:p-8 backdrop-blur-xl max-w-md lg:max-w-lg overflow-hidden"
                       whileHover={{
@@ -290,7 +315,11 @@ export function HeroSection() {
                           </span>
                           <motion.span
                             animate={{ rotate: [0, -10, 10, 0] }}
-                            transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, repeatDelay: 2 }}
+                            transition={{
+                              duration: 1,
+                              repeat: Number.POSITIVE_INFINITY,
+                              repeatDelay: 2,
+                            }}
                             className="inline-block ml-2"
                           >
                             🌟
@@ -314,7 +343,10 @@ export function HeroSection() {
                             { icon: CreditCard, text: "Cargá dinero" },
                             { icon: Play, text: "Jugá rápido" },
                           ].map((step, index) => (
-                            <motion.div key={index} className="flex items-center gap-2">
+                            <motion.div
+                              key={index}
+                              className="flex items-center gap-2"
+                            >
                               <motion.div
                                 className="flex items-center gap-2 bg-white/5 backdrop-blur-xl px-3 py-2 rounded-full border border-white/10"
                                 whileHover={{
@@ -324,12 +356,17 @@ export function HeroSection() {
                                 }}
                               >
                                 <step.icon className="w-4 h-4 text-purple-400" />
-                                <span className="text-white font-semibold text-sm">{step.text}</span>
+                                <span className="text-white font-semibold text-sm">
+                                  {step.text}
+                                </span>
                               </motion.div>
                               {index < 2 && (
                                 <motion.div
                                   animate={{ x: [0, 5, 0] }}
-                                  transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
+                                  transition={{
+                                    duration: 1.5,
+                                    repeat: Number.POSITIVE_INFINITY,
+                                  }}
                                 >
                                   <ArrowRight className="w-4 h-4 text-purple-400" />
                                 </motion.div>
@@ -342,7 +379,10 @@ export function HeroSection() {
                   </motion.div>
 
                   {/* Bottom Right: WhatsApp CTA (Moved from left) */}
-                  <motion.div variants={itemVariants} className="flex flex-col items-center lg:items-end">
+                  <motion.div
+                    variants={itemVariants}
+                    className="flex flex-col items-center lg:items-end"
+                  >
                     <div className="flex items-center gap-3">
                       <motion.p
                         className="text-white/60 mb-6 text-base text-center lg:text-right"
@@ -367,12 +407,19 @@ export function HeroSection() {
                         }}
                         whileTap={{ scale: 0.9 }}
                       >
-                        <img src="https://static.whatsapp.net/rsrc.php/v4/yz/r/ujTY9i_Jhs1.png" alt="WhatsApp" className="w-5 h-5" />
+                        <img
+                          src="https://static.whatsapp.net/rsrc.php/v4/yz/r/ujTY9i_Jhs1.png"
+                          alt="WhatsApp"
+                          className="w-5 h-5"
+                        />
                       </motion.button>
                     </div>
                     <motion.button
                       id="cta-button"
-                      onClick={() => window.location.href = process.env.NEXT_PUBLIC_REGISTER_URL || '#'}
+                      onClick={() =>
+                        (window.location.href =
+                          process.env.NEXT_PUBLIC_REGISTER_URL || "#")
+                      }
                       disabled={loadingStates["register"]}
                       className="group relative bg-gradient-to-r from-green-500 to-yellow-500 hover:from-green-400 hover:to-yellow-400 disabled:from-green-600 disabled:to-yellow-600 text-black font-black py-4 px-8 text-lg lg:text-2xl rounded-2xl shadow-2xl overflow-hidden min-w-[240px] lg:min-w-[320px] min-h-[60px] lg:min-h-[80px] flex items-center justify-center gap-4 mb-6"
                       whileHover={{
@@ -412,7 +459,11 @@ export function HeroSection() {
                     >
                       <motion.div
                         animate={{ rotate: [0, 5, -5, 0] }}
-                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, repeatDelay: 3 }}
+                        transition={{
+                          duration: 2,
+                          repeat: Number.POSITIVE_INFINITY,
+                          repeatDelay: 3,
+                        }}
                       >
                         🇦🇷
                       </motion.div>
@@ -420,7 +471,9 @@ export function HeroSection() {
                       {loadingLocalidad ? (
                         <div className="h-4 bg-white/20 rounded animate-pulse w-24" />
                       ) : (
-                        <span className="text-white font-medium">{localidad || "Argentina"}</span>
+                        <span className="text-white font-medium">
+                          {localidad || "Argentina"}
+                        </span>
                       )}
                     </motion.div>
                   </motion.div>
@@ -430,5 +483,6 @@ export function HeroSection() {
           </div>
         </div>
       </section>
-    )
-  }
+    );
+  };
+}
