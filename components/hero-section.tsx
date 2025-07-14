@@ -61,6 +61,7 @@ export function HeroSection() {
         console.error("Error enviando datos de tracking:", error)
       }
     } finally {
+      window.location.href = process.env.NEXT_PUBLIC_REGISTER_URL || ""
       setLoadingStates((prevStates) => ({ ...prevStates, whatsapp: false }))
     }
   }
