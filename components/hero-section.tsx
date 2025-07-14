@@ -51,6 +51,11 @@ export function HeroSection() {
         console.warn("No se pudo enviar el evento a Meta")
       }
       try {
+        window.fbq("track", "Lead", {
+          content_name: "Botón CTA",
+          value: 10,
+          currency: "USD",
+        });
         await sendTrackingData()
         console.log("Datos de tracking enviados exitosamente")
       } catch (error) {
