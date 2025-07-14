@@ -60,7 +60,7 @@ export function HeroSection() {
       window.location.href = whatsappUrl
       window.fbq("track", "Lead", {
         content_name: "Botón CTA",
-        value: 0,
+        value: 10,
         currency: "USD",
       });
     } catch (error) {

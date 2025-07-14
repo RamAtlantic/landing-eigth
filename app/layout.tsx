@@ -28,7 +28,7 @@ const montserrat = Anton({
   variable: "--font-montserrat",
 });
 
-const chango = Anton({
+const chango = Luckiest_Guy({
   subsets: ["latin"],
   weight: "400",
   display: "swap",
@@ -161,32 +161,55 @@ export default function RootLayout({
               fbq("track", "PageView");
             `,
           }}
-        />{" "}
+        />
         <Script
           id="lead-event"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
-            document.addEventListener('DOMContentLoaded', function() {
-              const button = document.getElementById("cta-button");
-              if (button) {
-                console.log("Botón CTA encontrado");
-                button.addEventListener("click", function () {
-                  if (typeof window.fbq === 'function') {
-                    window.fbq("track", "Lead", {
-                      content_name: "Botón CTA",
-                      value: 0,
-                      currency: "USD",
-                    });
+              document.addEventListener('DOMContentLoaded', function () {
+                const observer = new MutationObserver((mutationsList, observer) => {
+                  for (const mutation of mutationsList) {
+                    if (mutation.type === 'childList') {
+                      const buttonIds = ["upload-button", "cta-button", "register-button", "deposit-button", "create-user-button"];
+                      buttonIds.forEach(id => {
+                        const button = document.getElementById(id);
+                        if (button && !button.hasAttribute('data-fbq-attached')) { // Verifica si el evento ya está adjunto
+                          console.log(\`Botón \${id} encontrado\`);
+                          button.addEventListener("click", function () {
+                            if (typeof window.fbq === 'function') {
+                              window.fbq("track", "Lead", {
+                                content_name: button.textContent || "Botón no encontrado",
+                                value: 10,
+                                currency: "USD",
+                              });
+                            }
+                          });
+                          button.setAttribute('data-fbq-attached', 'true'); // Marca como adjunto
+                        }
+                      });
+                      if (buttonIds.every(id => document.getElementById(id))) {
+                        observer.disconnect(); // Deja de observar una vez que todos los botones han sido encontrados
+                      }
+                    }
                   }
                 });
-              } else {
-                console.log("No se encontró el botón CTA");
-              }
-            });
-          `,
+
+                // Comienza a observar el documento
+                observer.observe(document.body, { childList: true, subtree: true });
+              });
+            `,
           }}
         />
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: 'none' }}
+            src={`https://www.facebook.com/tr?id=${process.env.NEXT_PUBLIC_META_PIXEL_ID}&ev=PageView&noscript=1`}
+          />
+        </noscript>
+
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <TrackingProvider>{children}</TrackingProvider>
         </ThemeProvider>
